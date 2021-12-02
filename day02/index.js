@@ -1,45 +1,5 @@
-const fs = require('fs');
-
-const lines = (filename = 'input.txt') => fs.readFileSync(filename).toString().trim().split('\n').map((x) => x);
-
-function getPart1() {
-  const pos = lines()
-    .map((line) => line.split(' '))
-    .reduce(
-      (prevInput, input) => {
-        const change = parseInt(input[1]);
-        switch (input[0]) {
-          case 'forward':
-            return { x: prevInput.x + change, z: prevInput.z };
-          case 'down':
-            return { x: prevInput.x, z: prevInput.z + change };
-          case 'up':
-            return { x: prevInput.x, z: prevInput.z - change };
-        }
-      },
-      { x: 0, z: 0 }
-    );
-  return pos.x * pos.z;
-}
-
-function getPart2() {
-  const pos = lines()
-    .map((line) => line.split(' '))
-    .reduce(
-      (prevInput, input) => {
-        const change = parseInt(input[1]);
-        switch (input[0]) {
-          case 'forward':
-            return { x: prevInput.x + change, z: prevInput.z + prevInput.a * change, a: prevInput.a };
-          case 'down':
-            return { x: prevInput.x, z: prevInput.z, a: prevInput.a + change };
-          case 'up':
-            return { x: prevInput.x, z: prevInput.z, a: prevInput.a - change };
-        }
-      },
-      { x: 0, z: 0, a: 0 }
-    );
-  return pos.x * pos.z;
-}
-
-console.log(process.env.part === 'part1' ? getPart1() : getPart2());
+const lines = (filename = 'input.txt') => require('fs').readFileSync(filename).toString().trim().split('\n').map((x) => x);
+const getPart1 = () => lines().map((line) => line.split(' ')).reduce((prevInput, input) => input[0] === 'forward' ? { x: prevInput.x + parseInt(input[1]), z: prevInput.z } : input[0] === 'down' ? { x: prevInput.x, z: prevInput.z + parseInt(input[1]) } : { x: prevInput.x, z: prevInput.z - parseInt(input[1]) }, { x: 0, z: 0 });
+const getPart2 = () => lines().map((line) => line.split(' ')).reduce((prevInput, input) => input[0] === 'forward' ? { x: prevInput.x + parseInt(input[1]), z: prevInput.z + prevInput.a * parseInt(input[1]), a: prevInput.a } : input[0] === 'down' ? { x: prevInput.x, z: prevInput.z, a: prevInput.a + parseInt(input[1]) } : { x: prevInput.x, z: prevInput.z, a: prevInput.a - parseInt(input[1]) }, { x: 0, z: 0, a: 0 });
+const multi = ({x, z}) => x * z
+console.log(process.env.part === 'part1' ? multi(getPart1()) : multi(getPart2()));
